@@ -14,11 +14,11 @@ oidc = OpenIDConnect(app)
 africastalking.initialize(username='YOUR_USERNAME', api_key='YOUR_API_KEY')
 sms = africastalking.SMS
 
-# Connect to the SQLite database
+
 conn = sqlite3.connect('customer_order.db')
 cursor = conn.cursor()
 
-# Create customers table if it doesn't exist
+
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS customers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,7 +27,7 @@ cursor.execute("""
     )
 """)
 
-# Create orders table if it doesn't exist
+
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS orders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,7 +43,7 @@ conn.commit()
 @app.route('/customers', methods=['POST'])
 @oidc.require_login
 def create_customer():
-    # Logic to create a new customer
+
     name = request.form.get('name')
     code = request.form.get('code')
     
@@ -55,16 +55,16 @@ def create_customer():
 @app.route('/orders', methods=['POST'])
 @oidc.require_login
 def create_order():
-    # Logic to create a new order
+    
     item = request.form.get('item')
     amount = request.form.get('amount')
     customer_id = request.form.get('customer_id')
     
     cursor.execute("INSERT INTO orders (item, amount, customer_id) VALUES (?, ?, ?)", (item, amount, customer_id))
     conn.commit()
-    
-    # Send SMS alert to customer
-    phone_number = "+254725847094"  # Replace with customer's phone number
+
+
+    phone_number = "+254725847094"
     message = "Your order has been placed successfully"
     response = sms.send(message, [phone_number])
     
